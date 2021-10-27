@@ -1,0 +1,54 @@
+{
+  "name": "jsftpd",
+  "id": "jsftpd",
+  "version": "0.1.0",
+  "description": "FTP server in pure javascript",
+  "main": "ftpd.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mailsvb/jsftpd.git"
+  },
+  "keywords": [
+    "ftp",
+    "ftpd",
+    "files",
+    "daemon"
+  ],
+  "author": {
+    "name": "Sven",
+    "email": "mailsvb@gmail.com",
+    "url": "https://github.com/mailsvb"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "*",
+    "eslint": "*",
+    "eslint-config-standard": "*",
+    "eslint-plugin-babel": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-jsdoc": "*",
+    "eslint-plugin-node": "*",
+    "eslint-plugin-promise": "*",
+    "eslint-plugin-security": "*",
+    "husky": "*",
+    "lint-staged": "*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "./*.js": "eslint"
+  },
+  "scripts": {
+    "lint": "eslint ./*.js"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "bugs": {
+    "url": "https://github.com/mailsvb/jsftpd.git/issues"
+  },
+  "homepage": "https://github.com/mailsvb/jsftpd#readme"
+}
