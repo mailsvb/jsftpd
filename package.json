@@ -3,7 +3,7 @@
   "id": "jsftpd",
   "version": "0.1.0",
   "description": "FTP server in pure javascript",
-  "main": "ftpd.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mailsvb/jsftpd.git"
@@ -29,19 +29,22 @@
     "eslint-plugin-node": "*",
     "eslint-plugin-promise": "*",
     "eslint-plugin-security": "*",
-    "husky": "*",
-    "lint-staged": "*"
+    "lint-staged": "*",
+    "husky": "*"
+  },
+  "scripts": {
+    "lint:js": "eslint lib/ --ext .js",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "lib/*.js": [
+      "npm run lint:js"
+    ]
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "lint-staged": {
-    "./*.js": "eslint"
-  },
-  "scripts": {
-    "lint": "eslint ./*.js"
   },
   "license": "MIT",
   "engines": {
