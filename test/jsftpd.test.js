@@ -557,5 +557,39 @@ test('test MKD message', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('250 Folder created successfully')
 
+    await promiseSocket.write('MKD /john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 Folder exists')
+
+    await promiseSocket.end()
+});
+
+test('test MKD message cannot create folder without permission', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('MKD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 Permission denied')
+
     await promiseSocket.end()
 });
