@@ -31,24 +31,12 @@
     "eslint-plugin-security": "*",
     "husky": "*",
     "jest": "^27.3.1",
-    "lint-staged": "*",
     "promise-socket": "^7.0.0"
   },
   "scripts": {
     "lint:js": "eslint lib/ --ext .js",
     "install-dev": "npm install --save-dev && husky install",
     "test": "jest"
-  },
-  "lint-staged": {
-    "lib/*.js": [
-      "npm run lint:js"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run test"
-    }
   },
   "license": "MIT",
   "engines": {
