@@ -1138,7 +1138,7 @@ test('test MFMT message', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
 
-    await promiseSocket.write('MFMT 20150101000001 mytestfile')
+    await promiseSocket.write('MFMT 20150215120000 mytestfile')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('253 Date/time changed okay')
 
@@ -1156,7 +1156,7 @@ test('test MFMT message', async () => {
 
     content = await promiseDataSocket.read();
     expect(content.toString().trim()).toMatch('type=file')
-    expect(content.toString().trim()).toMatch('modify=20150101000001')
+    expect(content.toString().trim()).toMatch('modify=20150215')
     expect(content.toString().trim()).toMatch('size=15')
     expect(content.toString().trim()).toMatch('mytestfile')
     await promiseDataSocket.end()
