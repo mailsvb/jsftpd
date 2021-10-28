@@ -34,7 +34,7 @@
   },
   "scripts": {
     "lint:js": "eslint lib/ --ext .js",
-    "prepare": "husky install"
+    "install-dev": "npm install --save-dev && husky install"
   },
   "lint-staged": {
     "lib/*.js": [
