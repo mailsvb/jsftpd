@@ -593,3 +593,125 @@ test('test MKD message cannot create folder without permission', async () => {
 
     await promiseSocket.end()
 });
+
+test('test RMD message', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFolderCreate: true,
+            allowUserFolderDelete: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('MKD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 Folder created successfully')
+
+    await promiseSocket.write('RMD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 Folder deleted successfully')
+
+    await promiseSocket.end()
+});
+
+test('test RMD message cannot delete folder without permission', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFolderCreate: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('MKD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 Folder created successfully')
+
+    await promiseSocket.write('RMD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 Permission denied')
+
+    await promiseSocket.end()
+});
+
+test('test CWD message', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFolderCreate: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('MKD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 Folder created successfully')
+
+    await promiseSocket.write('CWD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 CWD successful. "/john/" is current directory')
+
+    await promiseSocket.write('CWD /john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 CWD successful. "/john/" is current directory')
+
+    await promiseSocket.write('CWD ..')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 CWD successful. "/" is current directory')
+
+    await promiseSocket.write('CWD ..')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 CWD successful. "/" is current directory')
+
+    await promiseSocket.write('CWD false')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('530 CWD not successful')
+
+    await promiseSocket.end()
+});
