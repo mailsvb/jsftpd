@@ -2,6 +2,7 @@
 FTP server for nodejs in javascript
 
 [![GitHub Workflow - CI](https://github.com/mailsvb/jsftpd/workflows/test/badge.svg)](https://github.com/mailsvb/jsftpd/actions?workflow=test)
+[![Coverage Status](https://coveralls.io/repos/github/mailsvb/jsftpd/badge.svg?branch=main)](https://coveralls.io/github/mailsvb/jsftpd?branch=main)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mailsvb/jsftpd)](https://github.com/mailsvb/jsftpd/releases/latest)
 [![Npm package version](https://badgen.net/npm/v/express)](https://npmjs.com/package/jsftpd)
 [![Documentation Status](https://readthedocs.org/projects/jsftpd/badge/?version=latest)](https://jsftpd.readthedocs.io/en/latest/?badge=latest)
