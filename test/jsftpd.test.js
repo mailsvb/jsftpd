@@ -29,7 +29,7 @@ test('create ftpd instance without options created with default values', () => {
 });
 
 test('ftp server can be started on non default ports', () => {
-    server = new ftpd({cnf: {port: 50021, securePort: 50990}})
+    server = new ftpd({tls: {rejectUnauthorized: false}, cnf: {port: 50021, securePort: 50990}})
     expect(server).toBeInstanceOf(ftpd);
     expect(server._opt.cnf.port).toBe(50021)
     expect(server._opt.cnf.securePort).toBe(50990)
@@ -39,7 +39,7 @@ test('ftp server can be started on non default ports', () => {
 });
 
 test('login as anonymous not allowed by default', async () => {
-    server = new ftpd({cnf: {port: 50021, securePort: 50990}})
+    server = new ftpd({cnf: {port: 50021}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -57,7 +57,7 @@ test('login as anonymous not allowed by default', async () => {
 });
 
 test('login as anonymous when enabled', async () => {
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, allowAnonymousLogin: true}})
+    server = new ftpd({cnf: {port: 50021, allowAnonymousLogin: true}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -80,7 +80,7 @@ test('login as anonymous when enabled', async () => {
 });
 
 test('login with default user settings', async () => {
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, username: 'john', password: 'doe'}})
+    server = new ftpd({cnf: {port: 50021, username: 'john', password: 'doe'}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -103,7 +103,7 @@ test('login with default user settings', async () => {
 });
 
 test('login with default user settings without password allowed', async () => {
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, username: 'john', allowLoginWithoutPassword: true}})
+    server = new ftpd({cnf: {port: 50021, username: 'john', allowLoginWithoutPassword: true}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -132,7 +132,7 @@ test('login with user settings', async () => {
             password: 'myers'
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -182,7 +182,7 @@ test('login with user settings without password allowed', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -220,7 +220,7 @@ test('login with user settings and wrong user rejected', async () => {
             password: 'doe'
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -246,7 +246,7 @@ test('login with user settings and wrong password rejected', async () => {
             password: 'doe'
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -276,7 +276,7 @@ test('test unknown message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -306,7 +306,7 @@ test('test CLNT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -336,7 +336,7 @@ test('test SYST message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -366,7 +366,7 @@ test('test FEAT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -396,7 +396,7 @@ test('test PWD message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -426,7 +426,7 @@ test('test QUIT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -456,7 +456,7 @@ test('test PBSZ message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -486,7 +486,7 @@ test('test TYPE message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -520,7 +520,7 @@ test('test OPTS message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -558,7 +558,7 @@ test('test PROT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -590,6 +590,10 @@ test('test PROT message', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('200 Protection level is P')
 
+    await promiseSocket.write('PROT Z')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('534 Protection level must be C or P')
+
     await promiseSocket.end()
 });
 
@@ -600,7 +604,7 @@ test('test REST message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -635,7 +639,7 @@ test('test MKD message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -669,7 +673,7 @@ test('test MKD message cannot create folder without permission', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -701,7 +705,7 @@ test('test RMD message', async () => {
             allowUserFolderDelete: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -736,7 +740,7 @@ test('test RMD message cannot delete folder without permission', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -771,7 +775,7 @@ test('test CWD message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -822,7 +826,7 @@ test('test LIST message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -873,7 +877,7 @@ test('test MLSD message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -923,7 +927,7 @@ test('test STOR message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -994,7 +998,7 @@ test('test STOR message with handler', async () => {
         expect(path).toMatch('/')
         expect(data.toString()).toMatch('SOMETESTCONTENT')
     }
-    server = new ftpd({cnf: {uploadHandler: handler, port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {uploadHandler: handler, port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -1039,7 +1043,7 @@ test('test RETR message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -1103,7 +1107,7 @@ test('test MFMT message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -1174,7 +1178,7 @@ test('test RNFR/RNTO message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, securePort: 50990, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -1237,6 +1241,212 @@ test('test RNFR/RNTO message', async () => {
 
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('226 Successfully transferred "/"')
+
+    await promiseSocket.end()
+});
+
+test('test DELE message without permission', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('EPSV')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+
+    let promiseDataSocket = new PromiseSocket(new net.Socket())
+    let dataSocket = promiseDataSocket.stream
+    await dataSocket.connect(1024, 'localhost')
+
+    await promiseSocket.write('STOR mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    await promiseDataSocket.write('SOMETESTCONTENT');
+    dataSocket.end()
+    await promiseDataSocket.end()
+
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
+
+    await promiseSocket.write('DELE mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 Permission denied')
+
+    await promiseSocket.end()
+});
+
+test('test DELE message relative path', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFileDelete: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('EPSV')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+
+    let promiseDataSocket = new PromiseSocket(new net.Socket())
+    let dataSocket = promiseDataSocket.stream
+    await dataSocket.connect(1024, 'localhost')
+
+    await promiseSocket.write('STOR mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    await promiseDataSocket.write('SOMETESTCONTENT');
+    dataSocket.end()
+    await promiseDataSocket.end()
+
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
+
+    await promiseSocket.write('DELE mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 File deleted successfully')
+
+    await promiseSocket.end()
+});
+
+test('test DELE message absolute path', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFileDelete: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('EPSV')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+
+    let promiseDataSocket = new PromiseSocket(new net.Socket())
+    let dataSocket = promiseDataSocket.stream
+    await dataSocket.connect(1024, 'localhost')
+
+    await promiseSocket.write('STOR mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    await promiseDataSocket.write('SOMETESTCONTENT');
+    dataSocket.end()
+    await promiseDataSocket.end()
+
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
+
+    await promiseSocket.write('DELE /mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 File deleted successfully')
+
+    await promiseSocket.end()
+});
+
+test('test SIZE message', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('EPSV')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+
+    let promiseDataSocket = new PromiseSocket(new net.Socket())
+    let dataSocket = promiseDataSocket.stream
+    await dataSocket.connect(1024, 'localhost')
+
+    await promiseSocket.write('STOR mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    await promiseDataSocket.write('SOMETESTCONTENT');
+    dataSocket.end()
+    await promiseDataSocket.end()
+
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
+
+    await promiseSocket.write('SIZE /myfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 File not found')
+
+    await promiseSocket.write('SIZE /mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('213 15')
+
+    await promiseSocket.write('SIZE mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('213 15')
 
     await promiseSocket.end()
 });
