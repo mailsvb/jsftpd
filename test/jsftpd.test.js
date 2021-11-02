@@ -1,9 +1,16 @@
 const { ftpd } = require('../index')
+const util = require('util')
 const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
 let server
+
+const formatPort = (addr, port) => {
+    const p1 = (port) / 256 | 0
+    const p2 = (port) % 256
+    return util.format('%s,%d,%d', addr.split('.').join(','), p1, p2)
+}
 
 afterEach(() => {
     server.stop()
@@ -1609,5 +1616,95 @@ test('test MLSD message over secure connection', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
 
+    await promiseSocket.end()
+});
+
+
+test('test PORT message', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFolderCreate: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('MKD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 Folder created successfully')
+
+    const dataServer = net.createServer()
+    let promiseDataSocket = new PromiseSocket(dataServer)
+    await promiseDataSocket.stream.listen(20, '127.0.0.1')
+
+    const portData = formatPort('127.0.0.1', 20)
+    await promiseSocket.write(`PORT ${portData}`)
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('200 Port command successful')
+
+    await promiseSocket.write('MLSD')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    await promiseDataSocket.stream.close()
+    await promiseSocket.end()
+});
+
+test('test EPRT message', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+            allowUserFolderCreate: true
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users}})
+    expect(server).toBeInstanceOf(ftpd);
+    server.start()
+
+    let content
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('MKD john')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('250 Folder created successfully')
+
+    const dataServer = net.createServer()
+    let promiseDataSocket = new PromiseSocket(dataServer)
+    await promiseDataSocket.stream.listen(20, '127.0.0.1')
+
+    await promiseSocket.write(`EPRT ||127.0.0.1|20|`)
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('200 Extended Port command successful')
+
+    await promiseSocket.write('MLSD')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    await promiseDataSocket.stream.close()
     await promiseSocket.end()
 });
