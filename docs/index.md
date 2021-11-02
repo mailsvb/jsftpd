@@ -28,10 +28,8 @@ server.on('error', console.error)
 server.start()
 ```
 
-Contents:
+## Contents
 
 .. toctree::
-   :maxdepth: 2
-   :glob:
 
-   *
+   options.md
