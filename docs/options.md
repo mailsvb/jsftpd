@@ -6,8 +6,49 @@ jsftpd takes an object when a new instance is created. This object can contain t
 new ftpd({tls: {...}, cnf: {...}})
 ```
 
-* **tls**: TLS options. Takes any option as per node.js tls.createServer [options](https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener)
+* **tls**: TLS options. Takes any option as per node.js tls.createServer
 * **cnf**: jsftpd specific configuration items
+
+## tls
+
+jsftpd will only listen on the `securePort`, when the instance is created with a `tls` property. This property takes **all** options from node.js [tls.createServer](https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener).\
+Some default values are configured.
+
+### honorCipherOrder
+
+**Type: `boolean`**\
+**Default: `true`**
+
+Attempt to use the server's cipher suite preferences instead of the client's
+
+### rejectUnauthorized
+
+**Type: `boolean`**\
+**Default: `false`**
+
+If not `false` the server will reject any connection which is not authorized with the list of supplied CAs.
+
+### cert
+
+**Type: `string | string[] | Buffer | Buffer[]`**\
+**Default: `...`**
+
+A self signed certificate has been added to allow using the TLS interface.
+
+```{note}
+The default certificate **must** be replaced for secure operation.
+```
+
+### key
+
+**Type: `string | string[] | Buffer | Buffer[]`**\
+**Default: `...`**
+
+A self generated RSA private key to allow using the TLS interface.
+
+```{note}
+The default key **must** be replaced for secure operation.
+```
 
 ## cnf
 
