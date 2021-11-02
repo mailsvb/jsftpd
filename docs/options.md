@@ -2,7 +2,7 @@
 
 jsftpd takes an object when a new instance is created. This object can contain a ``cnf`` property, which contains the config items mentioned on this page as an object itself.
 
-```js
+```{code-block} javascript
 const options = {
     port: 21,
     allowUserFolderCreate: false
@@ -18,7 +18,7 @@ The below options can be set with the cnf property when creating a new instance 
 
 The port used for unencrypted or explicit encrypted access. jsftpd will listen on this port for incoming connections. `default: 21`
 
-```
+```{code-block} javascript
 port: 21
 ```
 
@@ -26,7 +26,7 @@ port: 21
 
 The port used for encrypted (implicit) access. jsftpd will listen on this port for incoming connections. `default: 990`
 
-```
+```{code-block} javascript
 securePort: 990
 ```
 
@@ -34,7 +34,7 @@ securePort: 990
 
 The maximum number of simultaneous connections to the ftp server. Will be counted separatly for control and data connections. `default: 10`
 
-```
+```{code-block} javascript
 maxConnections: 10
 ```
 
@@ -42,7 +42,7 @@ maxConnections: 10
 
 The minimum port used for establishing the data connection in passive mode. Together with ``maxConnections``, it builds the possible range of ports being used. `default: 1024`
 
-```
+```{code-block} javascript
 minDataPort: 1024
 ```
 
@@ -50,7 +50,7 @@ minDataPort: 1024
 
 The main folder used when the default user or the anonymous user accesses the server. `default: __dirname/tmp`
 
-```
+```{code-block} javascript
 basefolder: '/tmp'
 ```
 
@@ -58,7 +58,7 @@ basefolder: '/tmp'
 
 The main users username. By default, there is no main user configured. `default: null`
 
-```
+```{code-block} javascript
 username: 'john'
 ```
 
@@ -66,6 +66,6 @@ username: 'john'
 
 The main users password. By default, there is no main user configured. `default: null`
 
-```
+```{code-block} javascript
 password: '123456'
 ```
