@@ -2,6 +2,7 @@ config options
 ==============
 
 jsftpd takes an object when a new instance is created. This object can contain a ``cnf`` property, which contains the config items mentioned on this page as an object itself.
+Example
 ..  code-block:: javascript
 
     const options = {
@@ -20,7 +21,6 @@ port
 The port used for unencrypted or explicit encrypted access. jsftpd will listen on this port for incoming connections.
 
     ``port: 21``
-
     ``default: 21``
 
 securePort
@@ -28,5 +28,39 @@ securePort
 The port used for encrypted (implicit) access. jsftpd will listen on this port for incoming connections.
 
     ``securePort: 990``
-
     ``default: 990``
+
+maxConnections
+~~~~~~~~~~~~~~
+The maximum number of simultaneous connections to the ftp server. Will be counted separatly for control and data connections.
+
+    ``maxConnections: 10``
+    ``default: 10``
+
+minDataPort
+~~~~~~~~~~~
+The minimum port used for establishing the data connection in passive mode. Together with ``maxConnections``, it builds the possible range of ports being used.
+
+    ``minDataPort: 1024``
+    ``default: 1024``
+
+basefolder
+~~~~~~~~~~
+The main folder used when the default user or the anonymous user accesses the server.
+
+    ``basefolder: '/tmp'``
+    ``default: __dirname/tmp``
+
+username
+~~~~~~~~
+The main users username. By default, there is no main user configured.
+
+    ``username: 'john'``
+    ``default: null``
+
+password
+~~~~~~~~
+The main users password. By default, there is no main user configured.
+
+    ``password: '123456'``
+    ``default: null``

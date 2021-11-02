@@ -16,7 +16,7 @@ Install
 Quick start
 -----------
 
-To get an FTP server running quickly, the below code will get you started by allowing access for a single user.
+To get an FTP server running quickly, the below code will get you started by allowing access for a single user
 ..  code-block:: javascript
 
     const { ftpd } = require('jsftpd')
