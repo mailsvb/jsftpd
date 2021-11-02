@@ -142,6 +142,17 @@ Allow login without password. This only affects the main user.
 new ftpd({cnf: {allowLoginWithoutPassword: false}})
 ```
 
+### allowUserFileCreate
+
+**Type: `boolean`**\
+**Default: `true`**
+
+Allow to create files. This only affects the main user.
+
+```{code-block} javascript
+new ftpd({cnf: {allowUserFileCreate: true}})
+```
+
 ### allowUserFileOverwrite
 
 **Type: `boolean`**\
@@ -195,6 +206,17 @@ Allow the anonymous user to login. The defined `basefolder` will be the default 
 
 ```{code-block} javascript
 new ftpd({cnf: {allowAnonymousLogin: true}})
+```
+
+### allowAnonymousFileCreate
+
+**Type: `boolean`**\
+**Default: `false`**
+
+Allow the anonymous user to create files.
+
+```{code-block} javascript
+new ftpd({cnf: {allowAnonymousFileCreate: true}})
 ```
 
 ### allowAnonymousFileOverwrite
