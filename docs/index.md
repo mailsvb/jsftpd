@@ -31,5 +31,6 @@ server.start()
 ## Contents
 
 ```{toctree}
+index.md
 options.md
 ```
