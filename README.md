@@ -1,5 +1,5 @@
 # jsftpd
-FTP server for nodejs in javascript
+FTP server for nodejs
 
 [![GitHub Workflow - CI](https://github.com/mailsvb/jsftpd/workflows/test/badge.svg)](https://github.com/mailsvb/jsftpd/actions?workflow=test)
 [![Coverage Status](https://coveralls.io/repos/github/mailsvb/jsftpd/badge.svg)](https://coveralls.io/github/mailsvb/jsftpd?branch=main)
