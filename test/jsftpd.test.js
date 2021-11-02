@@ -726,6 +726,10 @@ test('test RMD message', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('250 Folder created successfully')
 
+    await promiseSocket.write('RMD /pete')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 Folder not found')
+
     await promiseSocket.write('RMD john')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('250 Folder deleted successfully')
@@ -944,6 +948,10 @@ test('test STOR message', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('232 User logged in')
 
+    await promiseSocket.write('STOR ../../mytestfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 Transfer failed "../../mytestfile"')
+
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
@@ -1086,6 +1094,10 @@ test('test RETR message', async () => {
     promiseDataSocket = new PromiseSocket(new net.Socket())
     dataSocket = promiseDataSocket.stream
     await dataSocket.connect(1024, 'localhost')
+
+    await promiseSocket.write('RETR /someotherfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 File not found')
 
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read();
@@ -1337,6 +1349,10 @@ test('test DELE message relative path', async () => {
 
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
+
+    await promiseSocket.write('DELE someotherfile')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('550 File not found')
 
     await promiseSocket.write('DELE mytestfile')
     content = await promiseSocket.read();
