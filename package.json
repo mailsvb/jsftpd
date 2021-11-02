@@ -2,17 +2,21 @@
   "name": "jsftpd",
   "id": "jsftpd",
   "version": "1.0.0",
-  "description": "FTP server in pure javascript",
+  "description": "FTP server for node.js",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mailsvb/jsftpd.git"
   },
   "keywords": [
+    "nodejs",
     "ftp",
     "ftpd",
-    "files",
-    "daemon"
+    "ftpd-server",
+    "file-transfer",
+    "ftp-server",
+    "file-transfer-protocol",
+    "ftpserver"
   ],
   "author": {
     "name": "Sven",
