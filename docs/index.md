@@ -31,6 +31,9 @@ server.start()
 ## Contents
 
 ```{toctree}
-index.md
-options.md
+---
+maxdepth: 1
+glob:
+---
+*
 ```
