@@ -11,7 +11,7 @@ FTP server for nodejs
 
 ## Install
 
-Either download from here or install via npm.
+Either download from [here](https://github.com/mailsvb/jsftpd/releases) or install via npm.
 
 ```
 $ npm install jsftpd
