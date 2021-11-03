@@ -6,7 +6,7 @@ FTP server for node.js
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mailsvb/jsftpd)](https://github.com/mailsvb/jsftpd/releases/latest)
 [![Npm package version](https://badgen.net/npm/v/jsftpd)](https://npmjs.com/package/jsftpd)
 [![Documentation Status](https://readthedocs.org/projects/jsftpd/badge/?version=latest)](https://jsftpd.readthedocs.io/en/latest/?badge=latest)
-[![GitHub license](https://badgen.net/github/license/Naereen/Strapdown.js)](https://github.com/mailsvb/jsftpd/blob/master/LICENSE)
+[![GitHub license](https://badgen.net/github/license/mailsvb/jsftpd)](https://github.com/mailsvb/jsftpd/blob/master/license)
 [![made-with-javascript](https://img.shields.io/badge/Made%20with-JavaScript-1f425f.svg)](https://www.javascript.com)
 
 ## Install
