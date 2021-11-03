@@ -1,5 +1,5 @@
 # jsftpd
-FTP server for nodejs
+FTP server for node.js
 
 [![GitHub Workflow - CI](https://github.com/mailsvb/jsftpd/workflows/test/badge.svg)](https://github.com/mailsvb/jsftpd/actions?workflow=test)
 [![Coverage Status](https://coveralls.io/repos/github/mailsvb/jsftpd/badge.svg)](https://coveralls.io/github/mailsvb/jsftpd?branch=main)
@@ -38,4 +38,4 @@ The full documentation of the project is available [here](https://jsftpd.readthe
 
 The ftpd instance takes an object with two properties that allows for configuring the new instance.
 - `tls` property object. Takes any configuration option as per node.js tls.createServer [options](https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener)
-- `cnf` property object. Takes jsftpd specific configuration items, like users authorized to login. See full documentation [here](https://jsftpd.readthedocs.io/en/latest/)
+- `cnf` property object. Takes jsftpd specific configuration items. See full documentation [here](https://jsftpd.readthedocs.io/en/latest/)
