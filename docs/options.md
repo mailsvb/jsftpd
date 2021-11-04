@@ -153,6 +153,17 @@ Allow to create files. This only affects the main user.
 new ftpd({cnf: {allowUserFileCreate: true}})
 ```
 
+### allowUserFileRetrieve
+
+**Type: `boolean`**\
+**Default: `true`**
+
+Allow to retrieve files. This only affects the main user.
+
+```{code-block} javascript
+new ftpd({cnf: {allowUserFileRetrieve: true}})
+```
+
 ### allowUserFileOverwrite
 
 **Type: `boolean`**\
@@ -217,6 +228,17 @@ Allow the anonymous user to create files.
 
 ```{code-block} javascript
 new ftpd({cnf: {allowAnonymousFileCreate: true}})
+```
+
+### allowAnonymousFileRetrieve
+
+**Type: `boolean`**\
+**Default: `false`**
+
+Allow the anonymous user to retrieve files.
+
+```{code-block} javascript
+new ftpd({cnf: {allowAnonymousFileRetrieve: true}})
 ```
 
 ### allowAnonymousFileOverwrite
