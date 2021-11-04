@@ -38,7 +38,7 @@ test('create ftpd instance without options created with default values', () => {
     expect(server._opt.cnf.securePort).toBe(990)
 });
 
-test('ftp server can be started on non default ports', () => {
+test('ftp server can be started on non default ports', async () => {
     server = new ftpd({tls: {rejectUnauthorized: false}, cnf: {port: 50021, securePort: 50990}})
     expect(server).toBeInstanceOf(ftpd);
     expect(server._opt.cnf.port).toBe(50021)
@@ -46,6 +46,17 @@ test('ftp server can be started on non default ports', () => {
     server.start()
     expect(server._tcp.address().port).toBe(50021)
     expect(server._tls.address().port).toBe(50990)
+    server.on('listen-tls', data => expect(data.port).toBe(50990))
+    server.on('listen-tcp', data => expect(data.port).toBe(50021))
+
+    const promiseSocket = new PromiseSocket(new net.Socket())
+    const socket = promiseSocket.stream
+    let content
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read();
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.end()
 });
 
 test('ftp server fails when basefolder does not exist', () => {
