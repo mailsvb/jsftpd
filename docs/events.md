@@ -17,7 +17,7 @@ Log events will provide debug information of a certain level. All events can be 
 ### log
 
 **Name: `log`**\
-**Attribute 1: `string`
+**Attribute: `string`
 
 Contains the plain FTP messages exchanged between client and server. Executing function needs to take one arugment of type `string`
 
@@ -28,7 +28,7 @@ server.on('log', (msg) => console.log(msg))
 ### debug
 
 **Name: `debug`**\
-**Attribute 1: `string`
+**Attribute: `string`
 
 Contains detailed debug information. Executing function needs to take one arugment of type `string`
 
@@ -43,7 +43,7 @@ Other events for specific occasions.
 ### listen
 
 **Name: `listen`**\
-**Attribute 1: `object`
+**Attribute: `object`
 
 This event will fire when the FTP server is listening on defined ports. Executing function needs to take one arugment of type `object`. The `object` contains the following information:
 
@@ -58,7 +58,7 @@ server.on('listen', (data) => console.log(`${data.protocol} on ${data.address}:$
 ### login
 
 **Name: `login`**\
-**Attribute 1: `object`
+**Attribute: `object`
 
 This event will fire when a user logs into the server. Executing function needs to take one arugment of type `object`. The `object` contains the following information:
 
@@ -73,7 +73,7 @@ server.on('login', (data) => console.log(`${data.username} logged in from ${data
 ### logoff
 
 **Name: `logoff`**\
-**Attribute 1: `object`
+**Attribute: `object`
 
 This event will fire when a user logs off from the server. Executing function needs to take one arugment of type `object`. The `object` contains the following information:
 
