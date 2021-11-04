@@ -46,8 +46,8 @@ test('ftp server can be started on non default ports', async () => {
     server.start()
     expect(server._tcp.address().port).toBe(50021)
     expect(server._tls.address().port).toBe(50990)
-    server.on('listen-tls', data => expect(data.port).toBe(50990))
-    server.on('listen-tcp', data => expect(data.port).toBe(50021))
+    const handler = jest.fn()
+    server.on('listen', handler)
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
@@ -55,6 +55,8 @@ test('ftp server can be started on non default ports', async () => {
     await socket.connect(50021, 'localhost')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('220 Welcome')
+
+    expect(handler).toBeCalledTimes(2)
 
     await promiseSocket.end()
 });
