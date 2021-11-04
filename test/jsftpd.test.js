@@ -1174,7 +1174,7 @@ test('test STOR message with handler', async () => {
         expect(data.toString()).toMatch('SOMETESTCONTENT')
         expect(offset).toBe(0)
     }
-    server = new ftpd({cnf: {uploadHandler: handler, port: 50021, user: users}})
+    server = new ftpd({cnf: {port: 50021, user: users}, hdl:{upload: handler}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -1339,14 +1339,9 @@ test('test RETR message with handler', async () => {
             allowUserFileRetrieve: true
         }
     ]
-    const handler = async (username, path, filename, offset) => {
-        expect(username).toMatch('john')
-        expect(filename).toMatch('mytestfile')
-        expect(path).toMatch('/')
-        expect(offset).toBe(0)
-        return 'SOMETESTCONTENT'
-    }
-    server = new ftpd({cnf: {downloadHandler: handler, port: 50021, user: users}})
+    const dl = jest.fn().mockImplementationOnce(() => Promise.resolve('SOMETESTCONTENT'));
+    const ul = jest.fn().mockImplementationOnce(() => Promise.resolve());
+    server = new ftpd({cnf: {port: 50021, user: users}, hdl: {download: dl, upload: ul}})
     expect(server).toBeInstanceOf(ftpd);
     server.start()
 
@@ -1389,10 +1384,6 @@ test('test RETR message with handler', async () => {
     dataSocket = promiseDataSocket.stream
     await dataSocket.connect(1024, 'localhost')
 
-    await promiseSocket.write('RETR /someotherfile')
-    content = await promiseSocket.read();
-    expect(content.toString().trim()).toBe('550 File not found')
-
     await promiseSocket.write('RETR mytestfile')
     // content = await promiseSocket.read();
     // expect(content.toString().trim()).toBe('150 Opening data channel')
@@ -1400,6 +1391,9 @@ test('test RETR message with handler', async () => {
     content = await promiseDataSocket.read();
     expect(content.toString().trim()).toMatch('SOMETESTCONTENT')
     await promiseDataSocket.end()
+
+    expect(ul).toBeCalledTimes(1)
+    expect(dl).toBeCalledTimes(1)
 
     await promiseSocket.end()
 });
