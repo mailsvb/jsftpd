@@ -119,9 +119,13 @@ test('test RETR message', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('550 File not found')
 
+    dataSocket.pause()
+
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    dataSocket.resume()
 
     content = await promiseDataSocket.read();
     expect(content.toString().trim()).toMatch('SOMETESTCONTENT')
@@ -194,9 +198,13 @@ test('test RETR message with ASCII', async () => {
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('550 File not found')
 
+    dataSocket.pause()
+
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    dataSocket.resume()
 
     content = await promiseDataSocket.read();
     expect(content.toString().trim()).toMatch('SOMETESTCONTENT')
@@ -261,9 +269,13 @@ test('test RETR message with handler', async () => {
     dataSocket = promiseDataSocket.stream
     await dataSocket.connect(1024, 'localhost')
 
+    dataSocket.pause()
+
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    dataSocket.resume()
 
     content = await promiseDataSocket.read();
     expect(content.toString().trim()).toMatch('SOMETESTCONTENT')
@@ -331,9 +343,13 @@ test('test RETR message with handler fails', async () => {
     dataSocket = promiseDataSocket.stream
     await dataSocket.connect(1024, 'localhost')
 
+    dataSocket.pause()
+
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('150 Opening data channel')
+
+    dataSocket.resume()
 
     content = await promiseDataSocket.read();
     expect(content).toBe(undefined)

@@ -1052,13 +1052,13 @@ test('test PORT message', async () => {
 
     const dataServer = net.createServer()
     let promiseDataSocket = new PromiseSocket(dataServer)
-    await promiseDataSocket.stream.listen(20, '127.0.0.1')
+    await promiseDataSocket.stream.listen(1024, '127.0.0.1')
 
     await promiseSocket.write(`PORT something`)
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('501 Port command failed')
 
-    const portData = formatPort('127.0.0.1', 20)
+    const portData = formatPort('127.0.0.1', 1024)
     await promiseSocket.write(`PORT ${portData}`)
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('200 Port command successful')
@@ -1101,13 +1101,13 @@ test('test EPRT message', async () => {
 
     const dataServer = net.createServer()
     let promiseDataSocket = new PromiseSocket(dataServer)
-    await promiseDataSocket.stream.listen(20, '127.0.0.1')
+    await promiseDataSocket.stream.listen(1024, '127.0.0.1')
 
     await promiseSocket.write(`EPRT something`)
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('501 Extended port command failed')
 
-    await promiseSocket.write(`EPRT ||127.0.0.1|20|`)
+    await promiseSocket.write(`EPRT ||127.0.0.1|1024|`)
     content = await promiseSocket.read();
     expect(content.toString().trim()).toBe('200 Extended Port command successful')
 
