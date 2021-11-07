@@ -4,21 +4,23 @@ const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
-let server
+jest.setTimeout(1000)
+let server = null
+const cleanupServer = function() {
+    if (server) {
+        server.stop()
+        server.cleanup()
+        server = null
+    }
+}
+beforeEach(() => cleanupServer())
+afterEach(() => cleanupServer())
 
 const formatPort = (addr, port) => {
     const p1 = (port) / 256 | 0
     const p2 = (port) % 256
     return util.format('%s,%d,%d', addr.split('.').join(','), p1, p2)
 }
-
-afterEach(() => {
-    if (server) {
-        server.stop()
-        server.cleanup()
-        server = null
-    }
-});
 
 test('create ftpd instance without options created with default values', () => {
     server = new ftpd()

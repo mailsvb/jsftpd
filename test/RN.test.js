@@ -4,15 +4,17 @@ const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
-let server
-
-afterEach(() => {
+jest.setTimeout(1000)
+let server = null
+const cleanupServer = function() {
     if (server) {
         server.stop()
         server.cleanup()
         server = null
     }
-});
+}
+beforeEach(() => cleanupServer())
+afterEach(() => cleanupServer())
 
 test('test RNFR message file does not exist', async () => {
     const users = [

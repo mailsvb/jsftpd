@@ -4,15 +4,17 @@ const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
-let server
-
-afterEach(() => {
+jest.setTimeout(1000)
+let server = null
+const cleanupServer = function() {
     if (server) {
         server.stop()
         server.cleanup()
         server = null
     }
-});
+}
+beforeEach(() => cleanupServer())
+afterEach(() => cleanupServer())
 
 test('test LIST message', async () => {
     const users = [
@@ -215,15 +217,14 @@ test('test MLSD message with handler', async () => {
     await dataSocket.connect(1024, 'localhost')
 
     await promiseSocket.write('MLSD')
-    content = await promiseSocket.read();
-    expect(content.toString().trim()).toBe('150 Opening data channel')
 
     content = await promiseDataSocket.read();
     expect(content.toString().trim()).toBe('')
     await promiseDataSocket.end()
 
     content = await promiseSocket.read();
-    expect(content.toString().trim()).toBe('226 Successfully transferred "/"')
+    expect(content.toString().trim()).toMatch('150 Opening data channel')
+    expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 
     await promiseSocket.end()
 });

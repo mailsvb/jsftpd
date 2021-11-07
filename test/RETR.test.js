@@ -4,15 +4,17 @@ const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
-let server
-
-afterEach(() => {
+jest.setTimeout(1000)
+let server = null
+const cleanupServer = function() {
     if (server) {
         server.stop()
         server.cleanup()
         server = null
     }
-});
+}
+beforeEach(() => cleanupServer())
+afterEach(() => cleanupServer())
 
 test('test RETR message not allowed', async () => {
     const users = [
@@ -272,8 +274,6 @@ test('test RETR message with handler', async () => {
     dataSocket.pause()
 
     await promiseSocket.write('RETR mytestfile')
-    content = await promiseSocket.read();
-    expect(content.toString().trim()).toBe('150 Opening data channel')
 
     dataSocket.resume()
 
@@ -282,7 +282,8 @@ test('test RETR message with handler', async () => {
     await promiseDataSocket.end()
 
     content = await promiseSocket.read();
-    expect(content.toString().trim()).toBe('226 Successfully transferred "mytestfile"')
+    expect(content.toString().trim()).toMatch('150 Opening data channel')
+    expect(content.toString().trim()).toMatch('226 Successfully transferred "mytestfile"')
 
     expect(ul).toBeCalledTimes(1)
     expect(dl).toBeCalledTimes(1)

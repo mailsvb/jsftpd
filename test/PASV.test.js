@@ -4,17 +4,17 @@ const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
-let server
-
 jest.setTimeout(1000)
-
-afterEach(() => {
+let server = null
+const cleanupServer = function() {
     if (server) {
         server.stop()
         server.cleanup()
         server = null
     }
-});
+}
+beforeEach(() => cleanupServer())
+afterEach(() => cleanupServer())
 
 test('test PASV message takes next free port', async () => {
     const users = [
