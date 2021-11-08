@@ -2,10 +2,12 @@ const { ftpd } = require('../index')
 const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
-const { sleep } = require('./utils')
+const { sleep, getCmdPortTCP, getDataPort, formatPort } = require('./utils')
 
 jest.setTimeout(5000)
 let server, content, dataContent = null
+const cmdPortTCP = getCmdPortTCP()
+const dataPort = getDataPort()
 
 const cleanup = function() {
     if (server) {
@@ -27,13 +29,13 @@ test('test LIST message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -45,13 +47,14 @@ test('test LIST message', async () => {
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('250 Folder created successfully')
 
+    const passiveModeData = formatPort('127.0.0.1', dataPort)
     await promiseSocket.write('PASV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('227 Entering passive mode (127,0,0,1,4,0)')
+    expect(content.toString().trim()).toBe(`227 Entering passive mode (${passiveModeData})`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('LIST')
     content = await promiseSocket.read()
@@ -78,13 +81,13 @@ test('test MLSD message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -98,11 +101,11 @@ test('test MLSD message', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
     content = await promiseSocket.read()
@@ -128,13 +131,13 @@ test('test MLSD message over secure connection', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -163,9 +166,9 @@ test('test MLSD message over secure connection', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
-    let promiseDataSocket = new PromiseSocket(new tls.connect(1024, 'localhost', {rejectUnauthorized: false}))
+    let promiseDataSocket = new PromiseSocket(new tls.connect(dataPort, 'localhost', {rejectUnauthorized: false}))
     let dataSocket = promiseDataSocket.stream
     await dataSocket.once('secureConnect', function(){})
 
@@ -193,13 +196,13 @@ test('test MLSD message with handler', async () => {
         }
     ]
     const ls = jest.fn().mockImplementationOnce(() => Promise.resolve(Buffer.from('')))
-    server = new ftpd({cnf: {port: 50021, user: users}, hdl: {list: ls}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}, hdl: {list: ls}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -209,11 +212,11 @@ test('test MLSD message with handler', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
     content = await promiseSocket.read()

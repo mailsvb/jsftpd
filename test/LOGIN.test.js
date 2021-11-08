@@ -2,9 +2,12 @@ const { ftpd } = require('../index')
 const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
+const { getCmdPortTCP, getDataPort } = require('./utils')
 
 jest.setTimeout(5000)
 let server, content, dataContent = null
+const cmdPortTCP = getCmdPortTCP()
+const dataPort = getDataPort()
 
 const cleanup = function() {
     if (server) {
@@ -19,14 +22,14 @@ beforeEach(() => cleanup())
 afterEach(() => cleanup())
 
 test('error message when not logged in', async () => {
-    server = new ftpd({cnf: {port: 50021}})
+    server = new ftpd({cnf: {port: cmdPortTCP}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
 
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
     await promiseSocket.write('REST 0')
@@ -37,14 +40,14 @@ test('error message when not logged in', async () => {
 })
 
 test('login as anonymous not allowed by default', async () => {
-    server = new ftpd({cnf: {port: 50021}})
+    server = new ftpd({cnf: {port: cmdPortTCP}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
 
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
     await promiseSocket.write('USER anonymous')
@@ -55,14 +58,14 @@ test('login as anonymous not allowed by default', async () => {
 })
 
 test('login as anonymous when enabled', async () => {
-    server = new ftpd({cnf: {port: 50021, allowAnonymousLogin: true}})
+    server = new ftpd({cnf: {port: cmdPortTCP, allowAnonymousLogin: true}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
 
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -78,14 +81,14 @@ test('login as anonymous when enabled', async () => {
 })
 
 test('login with default user settings', async () => {
-    server = new ftpd({cnf: {port: 50021, username: 'john', password: 'doe'}})
+    server = new ftpd({cnf: {port: cmdPortTCP, username: 'john', password: 'doe'}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
 
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -101,14 +104,14 @@ test('login with default user settings', async () => {
 })
 
 test('login with default user settings without password allowed', async () => {
-    server = new ftpd({cnf: {port: 50021, username: 'john', allowLoginWithoutPassword: true}})
+    server = new ftpd({cnf: {port: cmdPortTCP, username: 'john', allowLoginWithoutPassword: true}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
 
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -130,13 +133,13 @@ test('login with user settings', async () => {
             password: 'myers'
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -152,7 +155,7 @@ test('login with user settings', async () => {
 
     promiseSocket = new PromiseSocket(new net.Socket())
     socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -178,13 +181,13 @@ test('login with user settings without password allowed', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -196,7 +199,7 @@ test('login with user settings without password allowed', async () => {
 
     promiseSocket = new PromiseSocket(new net.Socket())
     socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -214,13 +217,13 @@ test('login with user settings and wrong user rejected', async () => {
             password: 'doe'
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -238,13 +241,13 @@ test('login with user settings and wrong password rejected', async () => {
             password: 'doe'
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 

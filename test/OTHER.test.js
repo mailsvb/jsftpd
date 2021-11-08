@@ -2,10 +2,13 @@ const { ftpd } = require('../index')
 const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
-const { sleep, formatPort } = require('./utils')
+const { sleep, getCmdPortTCP, getCmdPortTLS, getDataPort, formatPort } = require('./utils')
 
 jest.setTimeout(5000)
 let server, content, dataContent = null
+const cmdPortTCP = getCmdPortTCP()
+const cmdPortTLS = getCmdPortTLS()
+const dataPort = getDataPort()
 
 const cleanup = function() {
     if (server) {
@@ -38,20 +41,20 @@ test('create ftpd instance without options created with default values', () => {
 })
 
 test('ftp server can be started on non default ports', async () => {
-    server = new ftpd({tls: {rejectUnauthorized: false}, cnf: {port: 50021, securePort: 50990}})
+    server = new ftpd({tls: {rejectUnauthorized: false}, cnf: {port: cmdPortTCP, securePort: cmdPortTLS}})
     expect(server).toBeInstanceOf(ftpd)
-    expect(server._opt.cnf.port).toBe(50021)
-    expect(server._opt.cnf.securePort).toBe(50990)
+    expect(server._opt.cnf.port).toBe(cmdPortTCP)
+    expect(server._opt.cnf.securePort).toBe(cmdPortTLS)
     server.start()
-    expect(server._tcp.address().port).toBe(50021)
-    expect(server._tls.address().port).toBe(50990)
+    expect(server._tcp.address().port).toBe(cmdPortTCP)
+    expect(server._tls.address().port).toBe(cmdPortTLS)
     const handler = jest.fn()
     server.on('listen', handler)
 
     const promiseSocket = new PromiseSocket(new net.Socket())
     const socket = promiseSocket.stream
 
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -75,13 +78,13 @@ test('test unknown message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -103,13 +106,13 @@ test('test CLNT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -131,13 +134,13 @@ test('test SYST message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -159,13 +162,13 @@ test('test FEAT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -187,13 +190,13 @@ test('test PWD message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -215,13 +218,13 @@ test('test QUIT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -243,13 +246,13 @@ test('test PBSZ message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -271,13 +274,13 @@ test('test TYPE message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -303,13 +306,13 @@ test('test OPTS message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -339,13 +342,13 @@ test('test PROT message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -383,13 +386,13 @@ test('test REST message', async () => {
             allowLoginWithoutPassword: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -416,13 +419,13 @@ test('test MKD message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -449,13 +452,13 @@ test('test MKD message cannot create folder without permission', async () => {
             allowUserFolderCreate: false,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -479,13 +482,13 @@ test('test RMD message', async () => {
             allowUserFolderDelete: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -517,13 +520,13 @@ test('test RMD message cannot delete folder without permission', async () => {
             allowUserFolderDelete: false,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -550,13 +553,13 @@ test('test CWD message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -598,13 +601,13 @@ test('test MFMT message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -614,11 +617,11 @@ test('test MFMT message', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -637,11 +640,11 @@ test('test MFMT message', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     promiseDataSocket = new PromiseSocket(new net.Socket())
     dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
     content = await promiseSocket.read()
@@ -669,13 +672,13 @@ test('test MFMT message with handler', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}, hdl: {}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}, hdl: {}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -697,13 +700,13 @@ test('test MFMT message file does not exist', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -713,11 +716,11 @@ test('test MFMT message file does not exist', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -745,13 +748,13 @@ test('test DELE message without permission', async () => {
             allowUserFileDelete: false,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -761,11 +764,11 @@ test('test DELE message without permission', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -793,13 +796,13 @@ test('test DELE message relative path', async () => {
             allowUserFileDelete: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -809,11 +812,11 @@ test('test DELE message relative path', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -845,13 +848,13 @@ test('test DELE message absolute path', async () => {
             allowUserFileDelete: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -861,11 +864,11 @@ test('test DELE message absolute path', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -892,13 +895,13 @@ test('test SIZE message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -908,11 +911,11 @@ test('test SIZE message', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -947,13 +950,13 @@ test('test AUTH message', async () => {
             allowLoginWithoutPassword: true,
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -983,13 +986,13 @@ test('test PORT message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -1003,13 +1006,13 @@ test('test PORT message', async () => {
 
     const dataServer = net.createServer()
     let promiseDataSocket = new PromiseSocket(dataServer)
-    await promiseDataSocket.stream.listen(1024, '127.0.0.1')
+    await promiseDataSocket.stream.listen(dataPort, '127.0.0.1')
 
     await promiseSocket.write('PORT something')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('501 Port command failed')
 
-    const portData = formatPort('127.0.0.1', 1024)
+    const portData = formatPort('127.0.0.1', dataPort)
     await promiseSocket.write(`PORT ${portData}`)
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('200 Port command successful')
@@ -1030,13 +1033,13 @@ test('test EPRT message', async () => {
             allowUserFolderCreate: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -1050,13 +1053,13 @@ test('test EPRT message', async () => {
 
     const dataServer = net.createServer()
     let promiseDataSocket = new PromiseSocket(dataServer)
-    await promiseDataSocket.stream.listen(1024, '127.0.0.1')
+    await promiseDataSocket.stream.listen(dataPort, '127.0.0.1')
 
     await promiseSocket.write('EPRT something')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('501 Extended port command failed')
 
-    await promiseSocket.write('EPRT ||127.0.0.1|1024|')
+    await promiseSocket.write(`EPRT ||127.0.0.1|${dataPort}|`)
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('200 Extended Port command successful')
 

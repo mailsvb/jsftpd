@@ -2,10 +2,12 @@ const { ftpd } = require('../index')
 const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
-const { sleep } = require('./utils')
+const { sleep, getCmdPortTCP, getDataPort } = require('./utils')
 
 jest.setTimeout(5000)
 let server, content, dataContent = null
+const cmdPortTCP = getCmdPortTCP()
+const dataPort = getDataPort()
 
 const cleanup = function() {
     if (server) {
@@ -27,13 +29,13 @@ test('test RETR message not allowed', async () => {
             allowUserFileRetrieve: false
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -43,11 +45,11 @@ test('test RETR message not allowed', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -75,13 +77,13 @@ test('test RETR message', async () => {
             allowUserFileRetrieve: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -91,11 +93,11 @@ test('test RETR message', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -110,11 +112,11 @@ test('test RETR message', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     promiseDataSocket = new PromiseSocket(new net.Socket())
     dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('RETR /someotherfile')
     content = await promiseSocket.read()
@@ -144,13 +146,13 @@ test('test RETR message with ASCII', async () => {
             allowUserFileRetrieve: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -164,12 +166,12 @@ test('test RETR message with ASCII', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
     dataSocket.setEncoding('ascii')
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -184,12 +186,12 @@ test('test RETR message with ASCII', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     promiseDataSocket = new PromiseSocket(new net.Socket())
     dataSocket = promiseDataSocket.stream
     dataSocket.setEncoding('ascii')
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('RETR /someotherfile')
     content = await promiseSocket.read()
@@ -221,13 +223,13 @@ test('test RETR message with handler', async () => {
     ]
     const dl = jest.fn().mockImplementationOnce(() => Promise.resolve(Buffer.from('SOMETESTCONTENT')))
     const ul = jest.fn().mockImplementationOnce(() => Promise.resolve(true))
-    server = new ftpd({cnf: {port: 50021, user: users}, hdl: {download: dl, upload: ul}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}, hdl: {download: dl, upload: ul}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -237,11 +239,11 @@ test('test RETR message with handler', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -256,11 +258,11 @@ test('test RETR message with handler', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     promiseDataSocket = new PromiseSocket(new net.Socket())
     dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read()
@@ -291,13 +293,13 @@ test('test RETR message with handler fails', async () => {
     ]
     const dl = jest.fn().mockImplementationOnce(() => Promise.resolve('SOMETESTCONTENT'))
     const ul = jest.fn().mockImplementationOnce(() => Promise.resolve(true))
-    server = new ftpd({cnf: {port: 50021, user: users}, hdl: {download: dl, upload: ul}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users, minDataPort: dataPort}, hdl: {download: dl, upload: ul}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
@@ -307,11 +309,11 @@ test('test RETR message with handler fails', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     let promiseDataSocket = new PromiseSocket(new net.Socket())
     let dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('STOR mytestfile')
     content = await promiseSocket.read()
@@ -326,11 +328,11 @@ test('test RETR message with handler fails', async () => {
 
     await promiseSocket.write('EPSV')
     content = await promiseSocket.read()
-    expect(content.toString().trim()).toBe('229 Entering extended passive mode (|||1024|)')
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
 
     promiseDataSocket = new PromiseSocket(new net.Socket())
     dataSocket = promiseDataSocket.stream
-    await dataSocket.connect(1024, 'localhost')
+    await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('RETR mytestfile')
     content = await promiseSocket.read()
@@ -359,13 +361,13 @@ test('test RETR message no active or passive mode', async () => {
             allowUserFileRetrieve: true
         }
     ]
-    server = new ftpd({cnf: {port: 50021, user: users}})
+    server = new ftpd({cnf: {port: cmdPortTCP, user: users}})
     expect(server).toBeInstanceOf(ftpd)
     server.start()
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(50021, 'localhost')
+    await socket.connect(cmdPortTCP, 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
