@@ -20,10 +20,7 @@ To get an FTP server running quickly, the below code will get you started by all
 ```{code-block} javascript
 const { ftpd } = require('jsftpd')
 
-const server = new ftpd({cnf: {username: 'john', password: 'doe'})
-
-server.on('log', console.log)
-server.on('error', console.error)
+const server = new ftpd({cnf: {username: 'john', password: 'doe', basefolder: '/tmp'})
 
 server.start()
 ```

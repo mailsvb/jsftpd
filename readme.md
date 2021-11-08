@@ -24,10 +24,7 @@ To get an FTP server running quickly, the below code will get you started by all
 ```
 const { ftpd } = require('jsftpd')
 
-const server = new ftpd({cnf: {username: 'john', password: 'doe'})
-
-server.on('log', console.log)
-server.on('error', console.error)
+const server = new ftpd({cnf: {username: 'john', password: 'doe', basefolder: '/tmp'})
 
 server.start()
 ```
@@ -38,4 +35,5 @@ The full documentation of the project is available [here](https://jsftpd.readthe
 
 The ftpd instance takes an object with two properties that allows for configuring the new instance.
 - `tls` property object. Takes any configuration option as per node.js tls.createServer [options](https://nodejs.org/api/tls.html#tlscreateserveroptions-secureconnectionlistener)
-- `cnf` property object. Takes jsftpd specific configuration items. See full documentation [here](https://jsftpd.readthedocs.io/en/latest/)
+- `cnf` property object. Takes jsftpd specific configuration items. See full documentation [here](https://jsftpd.readthedocs.io/en/latest/options.html#cnf)
+- `hdl` property object. Takes handler functions for specific FTP commands. See full documentation [here](https://jsftpd.readthedocs.io/en/latest/options.html#hdl)
