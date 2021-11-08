@@ -3,7 +3,7 @@ const net = require('net')
 const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 
-jest.setTimeout(1000)
+jest.setTimeout(5000)
 let server, content, dataContent = null
 
 const cleanup = function() {
