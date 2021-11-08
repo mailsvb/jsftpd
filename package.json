@@ -40,7 +40,7 @@
   "scripts": {
     "lint:js": "eslint lib/ --ext .js",
     "install-dev": "npm install --save-dev && husky install",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "license": "MIT",
   "engines": {
