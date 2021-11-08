@@ -62,12 +62,12 @@ server.on('listen', (data) => console.log(`${data.protocol} on ${data.address}:$
 
 This event will fire when a user logs into the server. Executing function needs to take one arugment of type `object`. The `object` contains the following information:
 
-**username: `string` the user who has logged in**\
+**user: `string` the user who has logged in**\
 **address: `string` remote address from where the user logged in**\
 **total: `number` total amount of open sessions**
 
 ```{code-block} javascript
-server.on('login', (data) => console.log(`${data.username} logged in from ${data.address} total users ${data.total}))
+server.on('login', (data) => console.log(`${data.user} logged in from ${data.address} total users ${data.total}))
 ```
 
 ### logoff
@@ -77,10 +77,10 @@ server.on('login', (data) => console.log(`${data.username} logged in from ${data
 
 This event will fire when a user logs off from the server. Executing function needs to take one arugment of type `object`. The `object` contains the following information:
 
-**username: `string` the user who has logged off**\
+**user: `string` the user who has logged off**\
 **address: `string` remote address from where the user was logged in**\
 **total: `number` total amount of open sessions**
 
 ```{code-block} javascript
-server.on('logoff', (data) => console.log(`${data.username} logged off from ${data.address} total users ${data.total}))
+server.on('logoff', (data) => console.log(`${data.user} logged off from ${data.address} total users ${data.total}))
 ```
