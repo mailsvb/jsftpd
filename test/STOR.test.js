@@ -112,7 +112,6 @@ test('test STOR message', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('type=file')
@@ -122,7 +121,7 @@ test('test STOR message', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 
@@ -189,7 +188,6 @@ test('test STOR message with ASCII', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('type=file')
@@ -199,7 +197,7 @@ test('test STOR message with ASCII', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 
@@ -261,7 +259,6 @@ test('test STOR message overwrite not allowed', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('type=file')
@@ -271,7 +268,7 @@ test('test STOR message overwrite not allowed', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 

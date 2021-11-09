@@ -123,7 +123,6 @@ test('test RETR message', async () => {
     expect(content.toString().trim()).toBe('550 File not found')
 
     await promiseSocket.write('RETR mytestfile')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('SOMETESTCONTENT')
@@ -131,7 +130,7 @@ test('test RETR message', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "mytestfile"')
 
@@ -198,7 +197,6 @@ test('test RETR message with ASCII', async () => {
     expect(content.toString().trim()).toBe('550 File not found')
 
     await promiseSocket.write('RETR mytestfile')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('SOMETESTCONTENT')
@@ -206,7 +204,7 @@ test('test RETR message with ASCII', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "mytestfile"')
 
@@ -265,7 +263,6 @@ test('test RETR message with handler', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('RETR mytestfile')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('SOMETESTCONTENT')
@@ -273,7 +270,7 @@ test('test RETR message with handler', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "mytestfile"')
 
@@ -335,7 +332,6 @@ test('test RETR message with handler fails', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('RETR mytestfile')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent).toBe(undefined)
@@ -343,7 +339,7 @@ test('test RETR message with handler fails', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('550 Transfer failed "mytestfile"')
 
