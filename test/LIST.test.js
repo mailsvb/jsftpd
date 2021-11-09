@@ -57,7 +57,6 @@ test('test LIST message', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('LIST')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('dr--r--r--')
@@ -66,7 +65,7 @@ test('test LIST message', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 
@@ -108,7 +107,6 @@ test('test MLSD message', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toMatch('type=dir')
@@ -117,7 +115,7 @@ test('test MLSD message', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 
@@ -219,7 +217,6 @@ test('test MLSD message with handler', async () => {
     await dataSocket.connect(dataPort, 'localhost')
 
     await promiseSocket.write('MLSD')
-    content = await promiseSocket.read()
 
     dataContent = await promiseDataSocket.read()
     expect(dataContent.toString().trim()).toBe('')
@@ -227,7 +224,7 @@ test('test MLSD message with handler', async () => {
 
     await sleep(100)
 
-    content += await promiseSocket.read()
+    content = await promiseSocket.read()
     expect(content.toString().trim()).toMatch('150 Opening data channel')
     expect(content.toString().trim()).toMatch('226 Successfully transferred "/"')
 
