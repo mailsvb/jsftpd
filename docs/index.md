@@ -9,7 +9,7 @@ jsftpd is an FTP server written for node.js. It's feature set is:
 
 ## Install
 
-```{code-block} javascript
+```{code-block} shell
 npm install jsftpd
 ```
 
@@ -20,7 +20,7 @@ To get an FTP server running quickly, the below code will get you started by all
 ```{code-block} javascript
 const { ftpd } = require('jsftpd')
 
-const server = new ftpd({cnf: {username: 'john', password: 'doe', basefolder: '/tmp'})
+const server = new ftpd({cnf: {username: 'john', password: 'doe', basefolder: '/tmp'}})
 
 server.start()
 ```
