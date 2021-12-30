@@ -13,7 +13,7 @@ FTP server for node.js
 
 Either download from [here](https://github.com/mailsvb/jsftpd/releases) or install via npm.
 
-```
+```shell
 $ npm install jsftpd
 ```
 
@@ -21,10 +21,10 @@ $ npm install jsftpd
 
 To get an FTP server running quickly, the below code will get you started by allowing access for a single user.
 
-```
+```js
 const { ftpd } = require('jsftpd')
 
-const server = new ftpd({cnf: {username: 'john', password: 'doe', basefolder: '/tmp'})
+const server = new ftpd({cnf: {username: 'john', password: 'doe', basefolder: '/tmp'}})
 
 server.start()
 ```
