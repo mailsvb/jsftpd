@@ -4,7 +4,7 @@ const tls = require('tls')
 const {PromiseSocket, TimeoutError} = require('promise-socket')
 const { sleep, getCmdPortTCP, getDataPort } = require('./utils')
 
-jest.setTimeout(5000)
+jest.setTimeout(7500)
 let server, content, dataContent = null
 const cmdPortTCP = getCmdPortTCP()
 const dataPort = getDataPort()
@@ -128,6 +128,44 @@ test('test STOR message', async () => {
     await promiseSocket.end()
 })
 
+test('test STOR message failes due to socket timeout', async () => {
+    const users = [
+        {
+            username: 'john',
+            allowLoginWithoutPassword: true,
+        }
+    ]
+    server = new ftpd({cnf: {port: 50021, user: users, minDataPort: dataPort}})
+    expect(server).toBeInstanceOf(ftpd)
+    server.start()
+
+    let promiseSocket = new PromiseSocket(new net.Socket())
+    let socket = promiseSocket.stream
+    await socket.connect(50021, 'localhost')
+    content = await promiseSocket.read()
+    expect(content.toString().trim()).toBe('220 Welcome')
+
+    await promiseSocket.write('USER john')
+    content = await promiseSocket.read()
+    expect(content.toString().trim()).toBe('232 User logged in')
+
+    await promiseSocket.write('STOR ../../mytestfile')
+    content = await promiseSocket.read()
+    expect(content.toString().trim()).toBe('550 Transfer failed "../../mytestfile"')
+
+    await promiseSocket.write('EPSV')
+    content = await promiseSocket.read()
+    expect(content.toString().trim()).toBe(`229 Entering extended passive mode (|||${dataPort}|)`)
+
+    let promiseDataSocket = new PromiseSocket(new net.Socket())
+    let dataSocket = promiseDataSocket.stream
+    await dataSocket.connect(dataPort, 'localhost')
+
+    await sleep(5500)
+    expect(dataSocket.destroyed).toBe(true)
+
+    await promiseSocket.end()
+})
 
 test('test STOR message with ASCII', async () => {
     const users = [

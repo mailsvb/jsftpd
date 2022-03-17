@@ -40,7 +40,7 @@ test('test PASV message takes next free port', async () => {
 
     let promiseSocket = new PromiseSocket(new net.Socket())
     let socket = promiseSocket.stream
-    await socket.connect(cmdPortTCP, 'localhost')
+    await socket.connect(cmdPortTCP, '127.0.0.1', 'localhost')
     content = await promiseSocket.read()
     expect(content.toString().trim()).toBe('220 Welcome')
 
